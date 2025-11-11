@@ -15,6 +15,21 @@ namespace NetCore {
     namespace asio = boost::asio;
     using tcp = asio::ip::tcp;
 
+    static void configure_ssl_ctx(asio::ssl::context& ctx) {
+        ctx.set_options(
+            asio::ssl::context::default_workarounds
+        | asio::ssl::context::no_sslv2
+        | asio::ssl::context::no_sslv3
+        | asio::ssl::context::single_dh_use);
+
+        // try system CAs (needs ca-certificates on Linux)
+        boost::system::error_code ec;
+        ctx.set_default_verify_paths(ec);
+        // if ec, you can later load a PEM bundle manually
+
+        ctx.set_verify_mode(asio::ssl::verify_peer);
+    }
+
     BeastHttpTransport::BeastHttpTransport(asio::any_io_executor exec)
         : m_Executor(std::move(exec)) {}
 
@@ -29,15 +44,24 @@ namespace NetCore {
 
         if (parsed.scheme == "https") {
             asio::ssl::context ctx{ asio::ssl::context::tls_client };
+            configure_ssl_ctx(ctx);
 
             tcp::resolver resolver{ m_Executor };
             auto results = resolver.resolve(parsed.host, parsed.port, ec);
             if (ec) return std::unexpected(ec);
 
             asio::ssl::stream<beast::tcp_stream> stream(m_Executor, ctx);
+            if (!SSL_set_tlsext_host_name(stream.native_handle(), parsed.host.c_str())) {
+                beast::error_code ec2{
+                    static_cast<int>(::ERR_get_error()),
+                    asio::error::get_ssl_category()
+                };
+                return std::unexpected(ec2);
+            }
+
 
             beast::get_lowest_layer(stream).connect(results, ec);
-            if (ec) return std::unexpected(ec);
+            if (ec) return std::unexpected(ec);            
 
             stream.handshake(asio::ssl::stream_base::client, ec);
             if (ec) return std::unexpected(ec);
@@ -61,9 +85,11 @@ namespace NetCore {
             beast::flat_buffer buffer;
             http::response<http::string_body> hres;
             http::read(stream, buffer, hres, ec);
-            if (ec) return std::unexpected(ec);
-
+            if (ec) 
+                return std::unexpected(ec);
+            
             stream.shutdown(ec);
+            if (ec == asio::error::eof || ec == asio::ssl::error::stream_truncated) ec = {};
 
             HttpResponse res; 
             res.status = static_cast<int>(hres.result_int());
