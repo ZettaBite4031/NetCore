@@ -17,15 +17,20 @@ int main(int argc, char** argv) {
         "-Wpedantic",
         "-ggdb",
         "-Iinclude",
+        "-Ilibs",
         "-lboost_system", 
         "-lssl",
         "-lcrypto",
+        "-lcurl",
         NULL
     };
 
     const char* lib_srcs[] = {
         "src/url.cpp",
         "src/beast_http_transport.cpp",
+        "src/curl_http_transport.cpp",
+        "src/logging_http_transport.cpp",
+        "src/transport_factory.cpp",
         NULL
     };
 
