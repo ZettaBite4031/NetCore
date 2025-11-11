@@ -16,6 +16,10 @@ int main(int argc, char** argv) {
         "-Wextra",
         "-Wpedantic",
         "-ggdb",
+        "-Iinclude",
+        "-lboost_system", 
+        "-lssl",
+        "-lcrypto",
         NULL
     };
 
@@ -59,7 +63,9 @@ int main(int argc, char** argv) {
     nob_cmd_append(&cmd, compiler);
     nob_cmd_append(&cmd, "-o", example_exe);
     nob_cmd_append(&cmd, example);
-    nob_cmd_append(&cmd, "-Iinclude", "-std=c++23", "-Wall", "-Wextra", "-Wpedantic", "-ggdb");
+    for (int i = 0; cxxflags[i]; i++) {
+        nob_cmd_append(&cmd, cxxflags[i]);
+    }
 
     for (size_t i = 0; i < objs.count; i++) {
         nob_cmd_append(&cmd, objs.items[i]);
