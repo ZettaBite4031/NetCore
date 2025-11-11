@@ -1,4 +1,4 @@
-#include "netcore/curl_http_transport.hpp"
+#include "curl_http_transport.hpp"
 
 #include <curl/curl.h>
 #include <sstream>

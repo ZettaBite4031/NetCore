@@ -1,8 +1,10 @@
 #include "netcore/transport_factory.hpp"
 
-#include "netcore/beast_http_transport.hpp"
-#include "netcore/curl_http_transport.hpp"
-#include "netcore/logging_http_transport.hpp"
+#include "netcore/http_transport.hpp"
+
+#include "beast_http_transport.hpp"
+#include "curl_http_transport.hpp"
+#include "logging_http_transport.hpp"
 #include <boost/asio/io_context.hpp>
 #include <print>
 

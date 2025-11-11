@@ -6,7 +6,6 @@
 
 
 int main(int argc, char** argv) {
-    
     boost::asio::io_context io;
     auto transport = NetCore::make_http_transport(NetCore::TransportKind::Beast, NetCore::TransportWrap::Logging);
     NetCore::HttpClient client{ transport };
