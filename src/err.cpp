@@ -19,6 +19,7 @@ namespace NetCore {
             case errc::http_protocol_error: return "HTTP protocol error";
             case errc::unsupported_scheme:  return "unsupported URL scheme";
             case errc::not_connected:       return "not connected";
+            case errc::timed_out:           return "connection timed out";
             }
             return "unknown netcore error";
         }

@@ -13,6 +13,8 @@
 namespace NetCore {
 
     std::shared_ptr<IHttpTransport> make_http_transport(HttpTransportKind kind, TransportWrap wrap) {
+        (void)(wrap); // unused
+        
         static boost::asio::io_context io;
 
         std::shared_ptr<IHttpTransport> base;

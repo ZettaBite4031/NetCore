@@ -124,12 +124,12 @@ int main() {
 
     transports.push_back({
         "Beast",
-        NetCore::make_http_transport(NetCore::HttpTransportKind::Beast, NetCore::TransportWrap::Logging)
+        NetCore::make_http_transport(NetCore::HttpTransportKind::Beast)
     });
 
     transports.push_back({
         "cURL",
-        NetCore::make_http_transport(NetCore::HttpTransportKind::Curl, NetCore::TransportWrap::Logging)
+        NetCore::make_http_transport(NetCore::HttpTransportKind::Curl)
     });
 
     bool global_ok = true;

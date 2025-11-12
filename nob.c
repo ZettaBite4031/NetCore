@@ -30,7 +30,6 @@ int main(int argc, char** argv) {
         "src/url.cpp",
         "src/beast_http_transport.cpp",
         "src/curl_http_transport.cpp",
-        "src/logging_http_transport.cpp",
         "src/transport_factory.cpp",
         "src/beast_ws_transport.cpp",
         "src/http_client.cpp",
@@ -39,6 +38,7 @@ int main(int argc, char** argv) {
         "src/err.cpp",
         NULL
     };
+
 
     Nob_File_Paths objs = {0};
 
