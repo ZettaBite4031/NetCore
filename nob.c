@@ -36,6 +36,8 @@ int main(int argc, char** argv) {
         "src/webhook_client.cpp",
         "src/ws_session.cpp",
         "src/err.cpp",
+        "src/log.cpp",
+        "src/log_sinks.cpp",
         NULL
     };
 
