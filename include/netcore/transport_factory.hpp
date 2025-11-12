@@ -17,7 +17,6 @@ namespace NetCore {
 
     enum class TransportWrap {
         None,
-        Logging,
     };
 
     std::shared_ptr<IHttpTransport> make_http_transport(HttpTransportKind kind, TransportWrap wrap = TransportWrap::None);

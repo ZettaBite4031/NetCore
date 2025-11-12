@@ -4,7 +4,6 @@
 
 #include "beast_http_transport.hpp"
 #include "curl_http_transport.hpp"
-#include "logging_http_transport.hpp"
 
 #include "beast_ws_transport.hpp"
 
@@ -30,10 +29,6 @@ namespace NetCore {
         if (!base) {
             std::println("[TransportFactory] ERROR: Failed to create transport");
             return {};
-        }
-
-        if (wrap == TransportWrap::Logging) {
-            base = std::make_shared<LoggingHttpTransport>(base);
         }
 
         return base;
