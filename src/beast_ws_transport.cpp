@@ -1,4 +1,5 @@
 #include "beast_ws_transport.hpp"
+#include "netcore/err.hpp"
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
@@ -36,21 +37,21 @@ namespace NetCore {
 
     std::error_code BeastWebSocketTransport::connect(std::string_view uri) {
         auto parsed_opt = parse_url(uri);
-        if (!parsed_opt) return std::make_error_code(std::errc::invalid_argument);
+        if (!parsed_opt) return NetCore::errc::invalid_url;
         auto parsed = *parsed_opt;
         beast::error_code ec;
 
         if (parsed.scheme == "ws") {
             tcp::resolver resolver(m_Executor);
             auto results = resolver.resolve(parsed.host, parsed.port, ec);
-            if (ec) return ec;
+            if (ec) return NetCore::errc::connect_failed;
 
             m_Plain = std::make_unique<WsPlain>(m_Executor);
             beast::get_lowest_layer(m_Plain->ws).connect(results, ec);
-            if(ec) return ec;
+            if(ec) return NetCore::errc::connect_failed;
 
             m_Plain->ws.handshake(parsed.host, parsed.target, ec);
-            return ec;
+            return NetCore::errc::tls_failed;
         } else if (parsed.scheme == "wss") {
             m_SSLCTX = std::make_unique<SslCtxHolder>();
             m_SSLCTX->ctx.set_default_verify_paths(ec);
@@ -58,7 +59,7 @@ namespace NetCore {
 
             tcp::resolver resolver(m_Executor);
             auto results = resolver.resolve(parsed.host, parsed.port, ec);
-            if (ec) return ec;
+            if (ec) return NetCore::errc::connect_failed;
 
             m_SSL = std::make_unique<WsSsl>(m_Executor, m_SSLCTX->ctx);
 
@@ -69,19 +70,19 @@ namespace NetCore {
                     static_cast<int>(::ERR_get_error()),
                     asio::error::get_ssl_category()
                 };
-                return ec2;
+                return NetCore::errc::tls_failed;
             }
 
             beast::get_lowest_layer(m_SSL->ws).connect(results, ec);
-            if (ec) return ec;
+            if (ec) return NetCore::errc::connect_failed;
 
             m_SSL->ws.next_layer().handshake(asio::ssl::stream_base::client, ec);
-            if (ec) return ec;
+            if (ec) return NetCore::errc::tls_failed;
 
             m_SSL->ws.handshake(parsed.host, parsed.target, ec);
-            return ec;
+            return NetCore::errc::tls_failed;
         } else {
-            return std::make_error_code(std::errc::protocol_not_supported);
+            return NetCore::errc::unsupported_scheme;
         }
     }
 
@@ -90,14 +91,14 @@ namespace NetCore {
         if (m_Plain) {
             m_Plain->ws.text(true);
             m_Plain->ws.write(asio::buffer(text), ec);
-            return ec;
+            return NetCore::errc::write_failed;
         } 
         if (m_SSL) {
             m_SSL->ws.text(true);
             m_SSL->ws.write(asio::buffer(text), ec);
-            return ec;
+            return NetCore::errc::write_failed;
         }
-        return std::make_error_code(std::errc::not_connected);
+        return NetCore::errc::not_connected;
     }
 
     std::expected<std::string, std::error_code> BeastWebSocketTransport::receive_text() {
@@ -105,8 +106,8 @@ namespace NetCore {
         beast::error_code ec;
         if (m_Plain) m_Plain->ws.read(buffer, ec);
         else if (m_SSL) m_SSL->ws.read(buffer, ec);
-        else return std::unexpected(std::make_error_code(std::errc::not_connected));
-        if (ec) return std::unexpected(ec);
+        else return std::unexpected(NetCore::errc::not_connected);
+        if (ec) return std::unexpected(NetCore::errc::read_failed);
         return std::string(beast::buffers_to_string(buffer.data()));
     }
 

@@ -11,7 +11,7 @@ namespace NetCore {
         CurlHttpTransport();
         ~CurlHttpTransport() override;
 
-        std::expected<HttpResponse, std::error_code> send_request(const HttpRequest& request) override;
+        std::expected<HttpResponse, std::error_code> send_request(const HttpRequest& request, const RequestOptions& opt) override;
 
     private:
         static std::mutex m_InitMutex;

@@ -9,7 +9,7 @@ namespace NetCore {
     public:
         virtual ~IHttpTransport() = default;
 
-        virtual std::expected<HttpResponse, std::error_code> send_request(const HttpRequest& request) = 0;
+        virtual std::expected<HttpResponse, std::error_code> send_request(const HttpRequest& request, const RequestOptions& opt) = 0;
     };
 
 } // namespace NetCore

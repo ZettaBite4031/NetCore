@@ -9,7 +9,7 @@ namespace NetCore {
     public:
         explicit BeastHttpTransport(boost::asio::any_io_executor exec);
 
-        std::expected<HttpResponse, std::error_code> send_request(const HttpRequest& request) override;
+        std::expected<HttpResponse, std::error_code> send_request(const HttpRequest& request, const RequestOptions& opt) override;
 
     private:
         boost::asio::any_io_executor m_Executor;
