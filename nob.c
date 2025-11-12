@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
         "-lssl",
         "-lcrypto",
         "-lcurl",
+        "-fPIC",
         NULL
     };
 
@@ -97,6 +98,24 @@ int main(int argc, char** argv) {
         }
         
         nob_log(NOB_INFO, "Built %s", example_exes[i]);
+    }
+
+    nob_cmd_append(&cmd, "ar", "rcs", "build/libnetcore.a");
+    for (int i = 0; i < objs.count; i++) {
+        nob_cmd_append(&cmd, objs.items[i]);
+    }
+    if (!nob_cmd_run_sync_and_reset(&cmd)) {
+        nob_log(NOB_ERROR, "Failed to create library 'libnetcore.a'");
+        return 1;
+    }
+
+    nob_cmd_append(&cmd, "gcc", "-shared", "-o", "build/libnetcore.so");
+    for (int i = 0; i < objs.count; i++) {
+        nob_cmd_append(&cmd, objs.items[i]);
+    }
+    if (!nob_cmd_run_sync_and_reset(&cmd)) {
+        nob_log(NOB_ERROR, "Failed to create shared library 'libnetcore.so'");
+        return 1;
     }
 
     return 0;
