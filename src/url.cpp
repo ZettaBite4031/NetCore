@@ -1,34 +1,31 @@
 #include "netcore/url.hpp"
 
+#include <regex>
+
 namespace NetCore {
 
     std::optional<ParsedUrl> parse_url(std::string_view url) {
-        auto pos_scheme = url.find("://");
-        if (pos_scheme == std::string_view::npos) return std::nullopt;
+        static const std::regex re(
+            R"(^(\w+)://([^/:]+)(?::(\d+))?(.*)$)",
+            std::regex::ECMAScript
+        );
 
-        ParsedUrl parsed;
-        parsed.scheme = std::string(url.substr(0, pos_scheme));
-        auto rest = url.substr(pos_scheme + 3);
+        std::smatch match;
+        std::string url_s{ url };
+        if (!std::regex_match(url_s, match, re)) return std::nullopt;
 
-        auto pos_path = rest.find('/');
-        std::string_view hostport = rest;
-        std::string_view path = "/";
-        if (pos_path != std::string_view::npos) {
-            hostport = rest.substr(0, pos_path);
-            path = rest.substr(pos_path);
-        }
-        parsed.target = std::string(path);
-
-        auto pos_colon = hostport.find(':');
-        if (pos_colon != std::string_view::npos) {
-            parsed.host = std::string(hostport.substr(0, pos_colon));
-            parsed.port = std::string(hostport.substr(pos_colon + 1));
-        } else {
-            parsed.host = std::string(hostport);
-            parsed.port = (parsed.scheme == "https") ? "443" : "80";
+        ParsedUrl result;
+        result.scheme = match[1].str();
+        result.host   = match[2].str();
+        result.port   = match[3].matched ? match[3].str() : "";
+        result.target = match[4].matched && !match[4].str().empty() ? match[4].str() : "/";
+        
+        if (result.port.empty()) {
+            if (result.scheme == "http" || result.scheme == "ws") result.port = "80";
+            if (result.scheme == "https" || result.scheme == "wss") result.port = "443";
         }
 
-        return parsed;
+        return result;
     }
 
 } // namespace NetCore

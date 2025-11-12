@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
         "src/curl_http_transport.cpp",
         "src/logging_http_transport.cpp",
         "src/transport_factory.cpp",
+        "src/beast_ws_transport.cpp",
         NULL
     };
 
@@ -62,26 +63,37 @@ int main(int argc, char** argv) {
         nob_da_append(&objs, obj);
     }
 
-    const char* example = "examples/main.cpp";
-    const char* example_exe = "build/example";
+    const char* examples[] = {
+        "examples/http.cpp",
+        "examples/ws.cpp",
+        NULL
+    };
+    const char* example_exes[] = {
+        "build/http",
+        "build/ws",
+        NULL,
+    };
 
-    nob_cmd_append(&cmd, compiler);
-    nob_cmd_append(&cmd, "-o", example_exe);
-    nob_cmd_append(&cmd, example);
-    for (int i = 0; cxxflags[i]; i++) {
-        nob_cmd_append(&cmd, cxxflags[i]);
+    for (int i = 0; examples[i]; i++) {
+
+        nob_cmd_append(&cmd, compiler);
+        nob_cmd_append(&cmd, "-o", example_exes[i]);
+        nob_cmd_append(&cmd, examples[i]);
+        for (int i = 0; cxxflags[i]; i++) {
+            nob_cmd_append(&cmd, cxxflags[i]);
+        }
+        
+        for (size_t i = 0; i < objs.count; i++) {
+            nob_cmd_append(&cmd, objs.items[i]);
+        }
+        
+        if (!nob_cmd_run_sync_and_reset(&cmd)) {
+            nob_log(NOB_ERROR, "Failed to link %s", example_exes[i]);
+            return 1;
+        }
+        
+        nob_log(NOB_INFO, "Built %s", example_exes[i]);
     }
-
-    for (size_t i = 0; i < objs.count; i++) {
-        nob_cmd_append(&cmd, objs.items[i]);
-    }
-
-    if (!nob_cmd_run_sync_and_reset(&cmd)) {
-        nob_log(NOB_ERROR, "Failed to link %s", example_exe);
-        return 1;
-    }
-
-    nob_log(NOB_INFO, "Build: %s", example_exe);
 
     return 0;
 }
