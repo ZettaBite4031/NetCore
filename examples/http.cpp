@@ -5,9 +5,9 @@
 #include "netcore/transport_factory.hpp"
 
 
-int main(int argc, char** argv) {
+int main() {
     boost::asio::io_context io;
-    auto transport = NetCore::make_http_transport(NetCore::TransportKind::Beast, NetCore::TransportWrap::Logging);
+    auto transport = NetCore::make_http_transport(NetCore::HttpTransportKind::Curl, NetCore::TransportWrap::Logging);
     NetCore::HttpClient client{ transport };
 
     auto res = client.get("https://httpbin.org/delay/10");
