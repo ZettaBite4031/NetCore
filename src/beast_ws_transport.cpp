@@ -114,12 +114,15 @@ namespace NetCore {
         beast::error_code ec;
         if (m_Plain) {
             m_Plain->ws.close(websocket::close_code::normal, ec);
-            m_Plain.reset();
         }
         if (m_SSL) {
             m_SSL->ws.close(websocket::close_code::normal, ec);
-            m_SSL.reset();
         }
+    }
+
+    void BeastWebSocketTransport::reset() {
+        if (m_Plain) m_Plain.reset();
+        if (m_SSL) m_SSL.reset();
         m_SSLCTX.reset();
     }
 

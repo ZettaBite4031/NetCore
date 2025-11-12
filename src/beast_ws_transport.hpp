@@ -17,6 +17,7 @@ namespace NetCore {
         std::error_code send_text(std::string_view message) override;
         std::expected<std::string, std::error_code> receive_text() override;
         void close() override;
+        void reset() override;
 
     private:
         boost::asio::any_io_executor m_Executor;

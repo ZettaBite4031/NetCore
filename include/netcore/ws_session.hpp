@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <memory>
-
+#include <mutex>
 
 namespace NetCore {
 
@@ -25,11 +25,23 @@ namespace NetCore {
             }
         }
 
-        std::error_code send(std::string_view text) { return m_Transport->send_text(text); }
+        std::error_code send(std::string_view text) { 
+            std::scoped_lock lock(m_Mutex);
+            return m_Transport->send_text(text); 
+        }
 
-        void close() { m_Transport->close(); }
+        void close() { 
+            std::scoped_lock lock(m_Mutex);
+            m_Transport->close(); 
+        }
+        
+        void reset() { 
+            std::scoped_lock lock(m_Mutex);
+            m_Transport->reset(); 
+        }
 
     private:
+        std::mutex m_Mutex;
         std::shared_ptr<IWebSocketTransport> m_Transport;
         MessageCallback m_Callback;
     };

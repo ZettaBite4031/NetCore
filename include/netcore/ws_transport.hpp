@@ -14,6 +14,7 @@ namespace NetCore {
         virtual std::error_code send_text(std::string_view message) = 0;
         virtual std::expected<std::string, std::error_code> receive_text() = 0;
         virtual void close() = 0;
+        virtual void reset() = 0;
     };
 
 }; // namespace NetCore
