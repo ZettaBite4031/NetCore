@@ -27,6 +27,42 @@ namespace NetCore {
             return m_Transport->send_request(req);
         }
 
+        std::expected<HttpResponse, std::error_code> put(std::string url, std::string body = {}, std::vector<HttpHeader> headers = {}) {
+            HttpRequest req;
+            req.method = "PUT";
+            req.url = std::move(url);
+            req.body = std::move(body);
+            req.headers = std::move(headers);
+            return m_Transport->send_request(req);
+        }
+
+        std::expected<HttpResponse, std::error_code> patch(std::string url, std::string body = {}, std::vector<HttpHeader> headers = {}) {
+            HttpRequest req;
+            req.method = "PATCH";
+            req.url = std::move(url);
+            req.body = std::move(body);
+            req.headers = std::move(headers);
+            return m_Transport->send_request(req);
+        }
+
+        std::expected<HttpResponse, std::error_code> del(std::string url, std::string body = {}, std::vector<HttpHeader> headers = {}) {
+            HttpRequest req;
+            req.method = "DELETE";
+            req.url = std::move(url);
+            req.body = std::move(body);
+            req.headers = std::move(headers);
+            return m_Transport->send_request(req);
+        }
+
+        std::expected<HttpResponse, std::error_code> request(std::string method, std::string url, std::string body = {}, std::vector<HttpHeader> headers = {}) {
+            HttpRequest req;
+            req.method = std::move(method);
+            req.url = std::move(url);
+            req.body = std::move(body);
+            req.headers = std::move(headers);
+            return m_Transport->send_request(req);
+        }
+
     private:
         std::shared_ptr<IHttpTransport> m_Transport;
     };
