@@ -1,5 +1,6 @@
 #include "beast_http_transport.hpp"
 #include "netcore/url.hpp"
+#include "netcore/err.hpp"
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
@@ -33,10 +34,10 @@ namespace NetCore {
     BeastHttpTransport::BeastHttpTransport(asio::any_io_executor exec)
         : m_Executor(std::move(exec)) {}
 
-    std::expected<HttpResponse, std::error_code> BeastHttpTransport::send_request(const HttpRequest& request) {
+    std::expected<HttpResponse, std::error_code> BeastHttpTransport::send_request(const HttpRequest& request, const RequestOptions& opt) {
         auto parsed_opt = parse_url(request.url);
         if (!parsed_opt) {
-            return std::unexpected(std::make_error_code(std::errc::invalid_argument));
+            return std::unexpected(NetCore::errc::invalid_url);
         }
         auto parsed = *parsed_opt;
 
@@ -59,10 +60,11 @@ namespace NetCore {
                 return std::unexpected(ec2);
             }
 
-
+            beast::get_lowest_layer(stream).expires_after(opt.connect_timeout);
             beast::get_lowest_layer(stream).connect(results, ec);
             if (ec) return std::unexpected(ec);            
 
+            beast::get_lowest_layer(stream).expires_after(opt.read_timeout);
             stream.handshake(asio::ssl::stream_base::client, ec);
             if (ec) return std::unexpected(ec);
 
@@ -104,8 +106,14 @@ namespace NetCore {
             if (ec) return std::unexpected(ec);
 
             beast::tcp_stream stream(m_Executor);
+            stream.expires_after(opt.connect_timeout);
             stream.connect(results, ec);
-            if (ec) return std::unexpected(ec);
+            if (ec) {
+                if (ec == boost::asio::error::timed_out) 
+                    return std::unexpected(NetCore::errc::timed_out);
+                return std::unexpected(ec);
+            }
+            stream.expires_after(opt.read_timeout);
 
             http::request<http::string_body> req;
             req.method_string(request.method);
@@ -126,7 +134,11 @@ namespace NetCore {
             beast::flat_buffer buffer;
             http::response<http::string_body> hres;
             http::read(stream, buffer, hres, ec);
-            if (ec) return std::unexpected(ec);
+            if (ec) {
+                if (ec == boost::asio::error::timed_out) 
+                    return std::unexpected(NetCore::errc::timed_out);
+                return std::unexpected(ec);
+            }
 
             stream.socket().shutdown(tcp::socket::shutdown_both, ec);
 

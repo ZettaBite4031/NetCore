@@ -46,7 +46,7 @@ namespace NetCore {
         if (--m_InitCount == 0) curl_global_cleanup();
     }
 
-    std::expected<HttpResponse, std::error_code> CurlHttpTransport::send_request(const HttpRequest& request) {
+    std::expected<HttpResponse, std::error_code> CurlHttpTransport::send_request(const HttpRequest& request, const RequestOptions& opt) {
         CURL* curl = curl_easy_init();
         if (!curl) return std::unexpected(std::make_error_code(std::errc::not_enough_memory));
 
@@ -70,6 +70,8 @@ namespace NetCore {
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &response_headers);
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "NetCore-CurlHttpTransport/1.0");
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, static_cast<long>(opt.connect_timeout.count()));
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, static_cast<long>(opt.read_timeout.count()));
 
         if (request.method == "POST") {
             curl_easy_setopt(curl, CURLOPT_POST, 1L);
