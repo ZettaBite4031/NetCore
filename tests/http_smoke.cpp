@@ -4,8 +4,7 @@
 
 #include <boost/asio/io_context.hpp>
 
-#include "netcore/http_client.hpp"
-#include "netcore/transport_factory.hpp"
+#include "netcore/netcore.hpp"
 
 struct TestResult {
     std::string name;

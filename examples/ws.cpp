@@ -1,8 +1,7 @@
 #include <print>
 #include <thread>
-#include <boost/asio/io_context.hpp>
-#include "netcore/ws_session.hpp"
-#include "netcore/transport_factory.hpp"
+
+#include "netcore/netcore.hpp"
 
 int main() {
     auto transport = NetCore::make_ws_transport(NetCore::WsTransportKind::Beast);

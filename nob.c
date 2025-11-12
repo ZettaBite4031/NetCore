@@ -33,6 +33,9 @@ int main(int argc, char** argv) {
         "src/logging_http_transport.cpp",
         "src/transport_factory.cpp",
         "src/beast_ws_transport.cpp",
+        "src/http_client.cpp",
+        "src/webhook_client.cpp",
+        "src/ws_session.cpp",
         NULL
     };
 
