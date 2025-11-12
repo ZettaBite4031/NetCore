@@ -9,7 +9,7 @@ namespace NetCore {
         HttpRequest req;
         req.method = "GET";
         req.url = std::move(url);
-        req.url = std::move(body);
+        req.body = std::move(body);
         req.headers = std::move(headers);
         return m_Transport->send_request(req, effective(opt));
     }

@@ -51,7 +51,7 @@ namespace NetCore {
             if(ec) return NetCore::errc::connect_failed;
 
             m_Plain->ws.handshake(parsed.host, parsed.target, ec);
-            return NetCore::errc::tls_failed;
+            return ec ? NetCore::errc::tls_failed : NetCore::errc::ok;
         } else if (parsed.scheme == "wss") {
             m_SSLCTX = std::make_unique<SslCtxHolder>();
             m_SSLCTX->ctx.set_default_verify_paths(ec);
@@ -80,7 +80,7 @@ namespace NetCore {
             if (ec) return NetCore::errc::tls_failed;
 
             m_SSL->ws.handshake(parsed.host, parsed.target, ec);
-            return NetCore::errc::tls_failed;
+            return ec ? NetCore::errc::tls_failed : NetCore::errc::ok;
         } else {
             return NetCore::errc::unsupported_scheme;
         }
@@ -91,12 +91,12 @@ namespace NetCore {
         if (m_Plain) {
             m_Plain->ws.text(true);
             m_Plain->ws.write(asio::buffer(text), ec);
-            return NetCore::errc::write_failed;
+            return ec ? NetCore::errc::write_failed : NetCore::errc::ok;
         } 
         if (m_SSL) {
             m_SSL->ws.text(true);
             m_SSL->ws.write(asio::buffer(text), ec);
-            return NetCore::errc::write_failed;
+            return ec ? NetCore::errc::write_failed : NetCore::errc::ok;
         }
         return NetCore::errc::not_connected;
     }

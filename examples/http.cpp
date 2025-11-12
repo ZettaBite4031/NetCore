@@ -1,15 +1,13 @@
 #include <print>
-#include <boost/asio/io_context.hpp>
 
 #include "netcore/netcore.hpp"
 
 
 int main() {
-    boost::asio::io_context io;                     
     auto transport = NetCore::make_http_transport(NetCore::HttpTransportKind::Curl /* or Beast */);
     NetCore::HttpClient client{ transport };
 
-    auto res = client.get("https://httpbin.org/get");
+    auto res = client.get("https://httpbingo.org/get");
     if (!res) {
         std::println("ERROR: {}", res.error().message());
         return 1;
