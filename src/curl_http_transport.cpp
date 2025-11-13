@@ -72,6 +72,16 @@ namespace NetCore {
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "NetCore-CurlHttpTransport/1.0");
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, static_cast<long>(opt.connect_timeout.count()));
         curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, static_cast<long>(opt.read_timeout.count()));
+        curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
+
+        if (opt.proxy) {
+            const auto& px = *opt.proxy;
+            curl_easy_setopt(curl, CURLOPT_PROXY, px.url.c_str());
+            if (!px.username.empty()) {
+                std::string creds = px.username + ":" + px.password;
+                curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, creds.c_str());
+            }
+        }
 
         if (request.method == "POST") {
             curl_easy_setopt(curl, CURLOPT_POST, 1L);

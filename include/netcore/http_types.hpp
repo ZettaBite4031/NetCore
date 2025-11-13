@@ -25,6 +25,12 @@ namespace NetCore {
         std::string body;
     };
 
+    struct ProxyOptions {
+        std::string url;
+        std::string username;
+        std::string password;
+    };
+
     struct RequestOptions {
         std::chrono::milliseconds connect_timeout   { 0 };
         std::chrono::milliseconds read_timeout      { 0 };
@@ -32,6 +38,8 @@ namespace NetCore {
 
         std::string route_key{};
         std::string trace_id{};
+    
+        std::optional<ProxyOptions> proxy{};
     };
 
     struct ClientConfig {

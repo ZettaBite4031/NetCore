@@ -35,6 +35,8 @@ namespace NetCore {
         : m_Executor(std::move(exec)) {}
 
     std::expected<HttpResponse, std::error_code> BeastHttpTransport::send_request(const HttpRequest& request, const RequestOptions& opt) {
+        if (opt.proxy) return std::unexpected(std::make_error_code(std::errc::operation_not_supported));
+        
         auto parsed_opt = parse_url(request.url);
         if (!parsed_opt) {
             return std::unexpected(NetCore::errc::invalid_url);
