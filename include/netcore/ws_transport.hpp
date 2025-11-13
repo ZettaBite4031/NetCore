@@ -15,6 +15,8 @@ namespace NetCore {
         virtual std::expected<std::string, std::error_code> receive_text() = 0;
         virtual void close() = 0;
         virtual void reset() = 0;
+
+        virtual std::error_code ping() { return std::make_error_code(std::errc::operation_not_supported); }
     };
 
 }; // namespace NetCore

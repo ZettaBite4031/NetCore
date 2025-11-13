@@ -51,7 +51,12 @@ namespace NetCore {
             if(ec) return NetCore::errc::connect_failed;
 
             m_Plain->ws.handshake(parsed.host, parsed.target, ec);
-            return ec ? NetCore::errc::tls_failed : NetCore::errc::ok;
+            if (ec) return NetCore::errc::tls_failed;
+
+            m_Plain->ws.control_callback([this](websocket::frame_type ft, beast::string_view) {
+                if (ft == websocket::frame_type::pong) m_LastPong.store(std::chrono::steady_clock::now(), std::memory_order_relaxed);
+            });
+            return NetCore::errc::ok;
         } else if (parsed.scheme == "wss") {
             m_SSLCTX = std::make_unique<SslCtxHolder>();
             m_SSLCTX->ctx.set_default_verify_paths(ec);
@@ -80,7 +85,12 @@ namespace NetCore {
             if (ec) return NetCore::errc::tls_failed;
 
             m_SSL->ws.handshake(parsed.host, parsed.target, ec);
-            return ec ? NetCore::errc::tls_failed : NetCore::errc::ok;
+            if (ec) return NetCore::errc::tls_failed;
+
+            m_SSL->ws.control_callback([this](websocket::frame_type ft, beast::string_view) {
+                if (ft == websocket::frame_type::pong) m_LastPong.store(std::chrono::steady_clock::now(), std::memory_order_relaxed);
+            });
+            return NetCore::errc::ok;
         } else {
             return NetCore::errc::unsupported_scheme;
         }
@@ -125,6 +135,13 @@ namespace NetCore {
         if (m_Plain) m_Plain.reset();
         if (m_SSL) m_SSL.reset();
         m_SSLCTX.reset();
+    }
+
+    std::error_code BeastWebSocketTransport::ping() {
+        beast::error_code ec;
+        if (m_Plain) { m_Plain->ws.ping({}, ec); return ec; }
+        if (m_SSL) { m_SSL->ws.ping({}, ec); return ec; }
+        return NetCore::errc::not_connected;
     }
 
 } // namespace NetCore

@@ -6,6 +6,9 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <memory>
 
+#include <atomic>
+#include <chrono>
+
 namespace NetCore {
 
     class BeastWebSocketTransport : public IWebSocketTransport {
@@ -18,6 +21,7 @@ namespace NetCore {
         std::expected<std::string, std::error_code> receive_text() override;
         void close() override;
         void reset() override;
+        std::error_code ping() override;
 
     private:
         boost::asio::any_io_executor m_Executor;
@@ -27,6 +31,8 @@ namespace NetCore {
 
         std::unique_ptr<class WsPlain> m_Plain;
         std::unique_ptr<class WsSsl> m_SSL;
+
+        std::atomic<std::chrono::steady_clock::time_point> m_LastPong;
     };
 
 } // namespace NetCore
