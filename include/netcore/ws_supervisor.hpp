@@ -15,6 +15,7 @@
 namespace NetCore {
 
     class WebSocketSupervisor {
+    public:
         using MessageCallback = std::function<void(const std::string&)>;
 
         WebSocketSupervisor(std::shared_ptr<IWebSocketTransport> transport, std::unique_ptr<IReconnectPolicy> reconnect, KeepaliveConfig keepalive);

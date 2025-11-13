@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
     const char* examples[] = {
         "examples/http.cpp",
         "examples/ws.cpp",
+        "examples/ws_sup.cpp",
         "tests/http_smoke.cpp",
         "tests/ws_smoke.cpp",
         "tests/http_client_tests.cpp",
@@ -84,6 +85,7 @@ int main(int argc, char** argv) {
     const char* example_exes[] = {
         "build/http",
         "build/ws",
+        "build/ws_sup",
         "build/http_smoke_test",
         "build/ws_smoke_test",
         "build/http_client_tests.cpp",

@@ -8,6 +8,9 @@ namespace NetCore {
 
     using namespace std::chrono;
 
+    WebSocketSupervisor::WebSocketSupervisor(std::shared_ptr<IWebSocketTransport> transport, std::unique_ptr<IReconnectPolicy> reconnect, KeepaliveConfig keepalive)
+        : m_Transport(std::move(transport)), m_Reconnect(std::move(reconnect)), m_Keepalive(keepalive) {}
+
     std::error_code WebSocketSupervisor::start(std::string uri, MessageCallback cb) {
         m_URI = std::move(uri);
         m_Callback = std::move(cb);
