@@ -39,4 +39,9 @@ namespace NetCore {
         std::chrono::milliseconds default_read_timeout{10000};
     };
 
+    struct RedirectPolicy {
+        int max_redirects = 5;
+        bool allow_post_to_get_on_303 = true;
+    };
+
 } // namespace NetCore
