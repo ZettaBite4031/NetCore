@@ -38,6 +38,9 @@ int main(int argc, char** argv) {
         "src/err.cpp",
         "src/log.cpp",
         "src/log_sinks.cpp",
+        "src/rate_limit.cpp",
+        "src/rate_limited_http_transport.cpp",
+        "src/ws_supervisor.cpp",
         NULL
     };
 
