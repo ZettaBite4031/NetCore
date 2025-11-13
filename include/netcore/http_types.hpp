@@ -29,6 +29,9 @@ namespace NetCore {
         std::chrono::milliseconds connect_timeout   { 0 };
         std::chrono::milliseconds read_timeout      { 0 };
         std::vector<HttpHeader> extra_headers       {};
+
+        std::string route_key{};
+        std::string trace_id{};
     };
 
     struct ClientConfig {

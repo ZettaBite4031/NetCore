@@ -7,6 +7,8 @@
 
 #include "beast_ws_transport.hpp"
 
+#include "netcore/rate_limited_http_transport.hpp"
+
 #include <boost/asio/io_context.hpp>
 #include <print>
 
@@ -26,6 +28,13 @@ namespace NetCore {
         case HttpTransportKind::Curl:
             base = std::make_shared<CurlHttpTransport>();
             break;
+        }
+
+        switch (wrap) {
+        case TransportWrap::None: break;
+        case TransportWrap::RateLimit:
+            auto policy = std::make_shared<SimpleHeaderRateLimitPolicy>();
+            base = std::make_shared<RateLimitedTransport>(base, policy);
         }
 
         if (!base) {
