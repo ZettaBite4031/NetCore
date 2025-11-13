@@ -44,4 +44,12 @@ namespace NetCore {
         bool allow_post_to_get_on_303 = true;
     };
 
+    struct RetryPolicy {
+        int max_attempts = 5;
+        std::chrono::milliseconds base_delay{ 200 };
+        bool retry_5xx = true;
+        bool retry_429 = true;
+        bool retry_network_errors = true;
+    };
+
 } // namespace NetCore

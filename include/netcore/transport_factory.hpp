@@ -19,10 +19,14 @@ namespace NetCore {
         None,
         RateLimit,
         Redirect,
-        RedirectRateLimit,
+        Retry,
+        RedirectRatelimit,
+        RetryRatelimit,
+        RedirectRetry,
+        All,
     };
 
-    std::shared_ptr<IHttpTransport> make_http_transport(HttpTransportKind kind, TransportWrap wrap = TransportWrap::RedirectRateLimit, RedirectPolicy redirect_policy = {});
+    std::shared_ptr<IHttpTransport> make_http_transport(HttpTransportKind kind, TransportWrap wrap = TransportWrap::All, RedirectPolicy redirect_policy = {}, RetryPolicy retry_policy = {});
     std::shared_ptr<IWebSocketTransport> make_ws_transport(WsTransportKind kind);
 
 } // namespace NetCore

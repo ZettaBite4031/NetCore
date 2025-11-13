@@ -42,6 +42,7 @@ int main(int argc, char** argv) {
         "src/rate_limited_http_transport.cpp",
         "src/ws_supervisor.cpp",
         "src/redirecting_transport.cpp",
+        "src/retrying_transport.cpp",
         NULL
     };
 
