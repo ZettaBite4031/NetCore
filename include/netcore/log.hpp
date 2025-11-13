@@ -95,12 +95,12 @@ namespace NetCore {
 #define NC_LOG(logger, lvl, msg, ...) do {} while(0)
 #endif
 
-#define NC_LOG_TRACE(lg, msg, ...)   NC_LOG(lg, ::netcore::LogLevel::trace,   msg, __VA_ARGS__)
-#define NC_LOG_DEBUG(lg, msg, ...)   NC_LOG(lg, ::netcore::LogLevel::debug,   msg, __VA_ARGS__)
-#define NC_LOG_INFO(lg,  msg, ...)   NC_LOG(lg, ::netcore::LogLevel::info,    msg, __VA_ARGS__)
-#define NC_LOG_WARN(lg,  msg, ...)   NC_LOG(lg, ::netcore::LogLevel::warn,    msg, __VA_ARGS__)
-#define NC_LOG_ERROR(lg, msg, ...)   NC_LOG(lg, ::netcore::LogLevel::error,   msg, __VA_ARGS__)
-#define NC_LOG_CRIT(lg,  msg, ...)   NC_LOG(lg, ::netcore::LogLevel::critical,msg, __VA_ARGS__)
+#define NC_LOG_TRACE(lg, msg, ...)   NC_LOG(lg, ::NetCore::LogLevel::trace,   msg, __VA_ARGS__)
+#define NC_LOG_DEBUG(lg, msg, ...)   NC_LOG(lg, ::NetCore::LogLevel::debug,   msg, __VA_ARGS__)
+#define NC_LOG_INFO(lg,  msg, ...)   NC_LOG(lg, ::NetCore::LogLevel::info,    msg, __VA_ARGS__)
+#define NC_LOG_WARN(lg,  msg, ...)   NC_LOG(lg, ::NetCore::LogLevel::warn,    msg, __VA_ARGS__)
+#define NC_LOG_ERROR(lg, msg, ...)   NC_LOG(lg, ::NetCore::LogLevel::error,   msg, __VA_ARGS__)
+#define NC_LOG_CRIT(lg,  msg, ...)   NC_LOG(lg, ::NetCore::LogLevel::critical,msg, __VA_ARGS__)
 
 
 } // namespace NetCore
