@@ -4,10 +4,10 @@
 
 
 int main() {
-    auto transport = NetCore::make_http_transport(NetCore::HttpTransportKind::Beast /* or Beast */, NetCore::TransportWrap::All);
+    auto transport = NetCore::make_http_transport(NetCore::HttpTransportKind::Curl /* or Beast */, NetCore::TransportWrap::All);
     NetCore::HttpClient client{ transport };
 
-    auto res = client.get("https://httpbin.org/absolute-redirect/5");
+    auto res = client.get("https://httpbingo.org/unstable");
     if (!res) {
         std::println("ERROR: {}", res.error().message());
         return 1;

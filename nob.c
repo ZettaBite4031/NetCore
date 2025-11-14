@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
         "-lssl",
         "-lcrypto",
         "-lcurl",
+        "-lz",
         "-fPIC",
         NULL
     };
@@ -43,6 +44,7 @@ int main(int argc, char** argv) {
         "src/ws_supervisor.cpp",
         "src/redirecting_transport.cpp",
         "src/retrying_transport.cpp",
+        "src/ws_decompress.cpp",
         NULL
     };
 

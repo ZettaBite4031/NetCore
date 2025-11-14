@@ -12,6 +12,7 @@
 #include "netcore/ws_supervisor.hpp"
 #include "netcore/ws_reconnect.hpp"
 #include "netcore/ws_keepalive.hpp"
+#include "netcore/ws_decompress.hpp"
 
 
 using namespace std::chrono_literals;
@@ -40,6 +41,8 @@ int main() {
     keepalive.pong_timeout = 8s;
 
     NetCore::WebSocketSupervisor sup{ transport, std::move(reconnect), keepalive };
+    auto decom = std::make_unique<NetCore::ZlibStreamDecompressor>();
+    sup.set_decompressor(std::move(decom));
 
     const std::string url = "wss://ws.postman-echo.com/raw";
 

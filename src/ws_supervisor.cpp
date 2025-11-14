@@ -62,7 +62,13 @@ namespace NetCore {
                 continue;
             }
 
-            if (m_Callback) m_Callback(*msg);
+            if (m_Callback)  { 
+                if (m_Decompressor) {
+                    auto dec = m_Decompressor->feed(*msg, true);
+                    if (!dec) break;
+                    m_Callback(*msg); 
+                } else m_Callback(*msg); 
+            }
         }
     }
 

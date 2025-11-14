@@ -10,7 +10,7 @@
 #include "ws_transport.hpp"
 #include "ws_keepalive.hpp"
 #include "ws_reconnect.hpp"
-
+#include "ws_decompress.hpp"
 
 namespace NetCore {
 
@@ -24,6 +24,7 @@ namespace NetCore {
         std::error_code send(std::string_view text);
         void stop();
         std::chrono::milliseconds last_rtt() const;
+        void set_decompressor(std::unique_ptr<IDecompressor> decompressor) { m_Decompressor = std::move(decompressor); }
 
     private:
         void reader_loop();
@@ -31,9 +32,10 @@ namespace NetCore {
 
         std::string m_URI;
         MessageCallback m_Callback;
-
+        
         std::shared_ptr<IWebSocketTransport> m_Transport;
         std::shared_ptr<IReconnectPolicy> m_Reconnect;
+        std::unique_ptr<IDecompressor> m_Decompressor;
         KeepaliveConfig m_Keepalive;
         
         std::thread m_Reader, m_Pinger;
